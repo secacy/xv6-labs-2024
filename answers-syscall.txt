@@ -1,0 +1,43 @@
+> Looking at the backtrace output, which function called syscall?
+
+kernel/syscall.c:133
+
+
+> What is the value of p->trapframe->a7 and what does that value represent? (Hint: look user/initcode.S, the first user program xv6 starts.)
+
+```
+(gdb) p num
+$4 = 7
+```
+The vale of p->trapframe->a7 is 7.
+look user/initcode.S，we found that the value represent SYS_exec
+
+
+> What was the previous mode that the CPU was in?
+
+machine mode
+
+
+> Write down the assembly instruction the kernel is panicing at. Which register corresponds to the variable num?
+
+sepc=0x80001c82
+```
+  num = * (int *) 0;
+    80001c82:	00002683          	lw	a3,0(zero) # 0 <_entry-0x80000000>
+```
+the assembly instruction the kernel is panicing at: `lw	a3,0(zero)`
+Which register corresponds to the variable num: a3
+
+
+> Why does the kernel crash? Hint: look at figure 3-3 in the text; is address 0 mapped in the kernel address space? Is that confirmed by the value in scause above? (See description of scause in RISC-V privileged instructions)
+
+load page fault. (尝试读取非法内存)
+address 0 is not mapped in the kernel space, it is unused(0~0x1000)
+Yes.
+
+> What is the name of the process that was running when the kernel paniced? What is its process id (pid)?
+
+initcode\000\000\000\000\000\000\000
+注：initcode 是 xv6 系统启动的第一个用户态进程。
+pid is: 1
+
